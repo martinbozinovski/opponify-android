@@ -1,4 +1,4 @@
-# Opponify Android — Phase 10A
+# Opponify Android — Phase 10A 
 
 Foundation only. Feature behavior is intentionally deferred to later Phase 10 subphases.
 
