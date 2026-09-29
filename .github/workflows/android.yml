@@ -10,6 +10,6 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-java@v5
         with: { distribution: temurin, java-version: '17' }
-      - uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@v4
       - run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
       - run: ./gradlew clean test lint assembleDevDebug --no-daemon
