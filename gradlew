@@ -11,7 +11,12 @@ if [ ! -x "$DIST/bin/gradle" ]; then
     curl --fail --location --retry 3 "https://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip" -o "$ZIP"
   fi
   curl --fail --location --retry 3 "https://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip.sha256" -o "$ZIP.sha256"
-  (cd "$CACHE_DIR" && sha256sum -c "$(basename "$ZIP.sha256")")
+  EXPECTED_SHA256=$(tr -d '\r\n[:space:]' < "$ZIP.sha256")
+  ACTUAL_SHA256=$(sha256sum "$ZIP" | awk '{print $1}')
+  if [ "$EXPECTED_SHA256" != "$ACTUAL_SHA256" ]; then
+    echo "Gradle distribution checksum mismatch" >&2
+    exit 1
+  fi
   rm -rf "$DIST.tmp"
   mkdir -p "$DIST.tmp"
   unzip -q "$ZIP" -d "$DIST.tmp"
