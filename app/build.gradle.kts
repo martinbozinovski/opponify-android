@@ -1,4 +1,4 @@
-plugins { id("com.android.application"); alias(libs.plugins.compose.compiler) }
+plugins { id("com.android.application"); alias(libs.plugins.compose.compiler); id("com.google.dagger.hilt.android"); id("org.jetbrains.kotlin.kapt") }
 android {
  namespace = "com.opponify.android"
  compileSdk = 36
@@ -10,8 +10,12 @@ android {
  compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
 }
 dependencies {
- implementation(project(":core:common")); implementation(project(":core:auth")); implementation(project(":core:design-system")); implementation(project(":core:navigation"))
- implementation(libs.androidx.core.ktx); implementation(libs.androidx.activity.compose); implementation(libs.androidx.lifecycle.runtime); implementation(libs.androidx.lifecycle.viewmodel.compose)
- implementation(platform(libs.compose.bom)); implementation(libs.compose.ui); implementation(libs.compose.ui.tooling.preview); implementation(libs.compose.material3); implementation(libs.hilt.android)
+ implementation(project(":core:common")); implementation(project(":core:model")); implementation(project(":core:auth")); implementation(project(":core:design-system")); implementation(project(":core:navigation"))
+ implementation(libs.androidx.core.ktx); implementation(libs.androidx.activity.compose); implementation(libs.androidx.lifecycle.runtime); implementation(libs.androidx.lifecycle.viewmodel.compose); implementation(libs.androidx.lifecycle.runtime.compose)
+ implementation(platform(libs.compose.bom)); implementation(libs.compose.ui); implementation(libs.compose.ui.tooling.preview); implementation(libs.compose.material3); implementation(libs.hilt.android); kapt(libs.hilt.compiler)
  debugImplementation(libs.compose.ui.tooling); androidTestImplementation(platform(libs.compose.bom)); androidTestImplementation(libs.compose.ui.test.junit4); debugImplementation(libs.compose.ui.test.manifest); testImplementation(libs.junit)
+}
+
+kapt {
+    correctErrorTypes = true
 }
