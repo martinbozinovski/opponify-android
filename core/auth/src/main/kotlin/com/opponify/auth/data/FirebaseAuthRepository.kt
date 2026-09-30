@@ -3,6 +3,7 @@ package com.opponify.auth.data
 import android.app.Activity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.FirebaseException
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.opponify.auth.domain.AuthRepository
@@ -89,7 +90,7 @@ class FirebaseAuthRepository @Inject constructor(
                         .addOnFailureListener { callbacks.onVerificationFailed(it.message ?: "Phone verification failed.") }
                 }
 
-                override fun onVerificationFailed(exception: Exception) {
+                override fun onVerificationFailed(exception: FirebaseException) {
                     callbacks.onVerificationFailed(exception.message ?: "Phone verification failed.")
                 }
 
