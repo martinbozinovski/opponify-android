@@ -21,11 +21,12 @@ check("local data policy", (root / "core/database/src/main/kotlin/com/opponify/d
 check("network environment boundary", (root / "core/network/src/main/kotlin/com/opponify/network/NetworkEnvironment.kt").exists())
 check("network mutation headers", (root / "core/network/src/main/kotlin/com/opponify/network/NetworkHeaders.kt").exists())
 check("Hilt application", "@HiltAndroidApp" in (root / "app/src/main/kotlin/com/opponify/android/OpponifyApplication.kt").read_text())
-check("Hilt compiler", "hilt-compiler" in catalog and "kapt(libs.hilt.compiler)" in app_gradle)
+check("Hilt compiler via KSP", "hilt-compiler" in catalog and "ksp(libs.hilt.compiler)" in app_gradle and "org.jetbrains.kotlin.kapt" not in app_gradle)
 check("Hilt module", "@InstallIn(SingletonComponent::class)" in (root / "app/src/main/kotlin/com/opponify/android/di/AppModule.kt").read_text())
 check("Hilt manifest application", 'android:name=".OpponifyApplication"' in manifest)
 check("Lifecycle StateFlow dependencies", "androidx-lifecycle-viewmodel-compose" in catalog and "androidx-lifecycle-runtime-compose" in catalog)
 check("common tests", (root / "core/common/src/test/kotlin/com/opponify/common/architecture/BaseViewModelTest.kt").exists())
+check("Built-in Kotlin retained", "org.jetbrains.kotlin.kapt" not in (root / "build.gradle.kts").read_text() and "org.jetbrains.kotlin.kapt" not in app_gradle)
 check("Java 17 retained", "JavaVersion.VERSION_17" in common_gradle and "JavaVersion.VERSION_17" in app_gradle)
 
 passed = sum(ok for _, ok in checks)
