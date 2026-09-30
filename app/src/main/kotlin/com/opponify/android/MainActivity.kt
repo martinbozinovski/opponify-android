@@ -1,6 +1,5 @@
 package com.opponify.android
 
-import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,7 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.activity.compose.LocalActivity
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -101,7 +100,7 @@ private fun AuthScreen(viewModel: AuthViewModel) {
 
 @androidx.compose.runtime.Composable
 private fun SignedInScreen(viewModel: AuthViewModel, state: AuthState.SignedIn) {
-    val activity = LocalContext.current as? Activity
+    val activity = LocalActivity.current
     val scope = rememberCoroutineScope()
     var phone by remember { mutableStateOf("") }
     var code by remember { mutableStateOf("") }
