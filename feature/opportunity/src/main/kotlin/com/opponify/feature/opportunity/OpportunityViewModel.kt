@@ -11,9 +11,16 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 sealed interface OpportunityUiState {
-    data class Form(val draft: OpportunityDraft = OpportunityDraft(), override val loadState: UiLoadState = UiLoadState.Initial) : OpportunityUiState
+    val draft: OpportunityDraft
+    val loadState: UiLoadState
+
+    data class Form(override val draft: OpportunityDraft = OpportunityDraft(), override val loadState: UiLoadState = UiLoadState.Initial) : OpportunityUiState
     data class Content(val opportunity: Opportunity, val draft: OpportunityDraft, override val loadState: UiLoadState = UiLoadState.Loaded) : OpportunityUiState
-    data class Error(val error: AppError) : OpportunityUiState
+    data class Error(
+        val error: AppError,
+        override val draft: OpportunityDraft = OpportunityDraft(),
+        override val loadState: UiLoadState = UiLoadState.Error(error),
+    ) : OpportunityUiState
 }
 
 class OpportunityViewModel(private val repository: OpportunityRepository) : BaseViewModel<OpportunityUiState>(OpportunityUiState.Form()) {
