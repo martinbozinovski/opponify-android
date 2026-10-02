@@ -15,7 +15,7 @@ sealed interface OpportunityUiState {
     val loadState: UiLoadState
 
     data class Form(override val draft: OpportunityDraft = OpportunityDraft(), override val loadState: UiLoadState = UiLoadState.Initial) : OpportunityUiState
-    data class Content(val opportunity: Opportunity, val draft: OpportunityDraft, override val loadState: UiLoadState = UiLoadState.Loaded) : OpportunityUiState
+    data class Content(val opportunity: Opportunity, override val draft: OpportunityDraft, override val loadState: UiLoadState = UiLoadState.Loaded) : OpportunityUiState
     data class Error(
         val error: AppError,
         override val draft: OpportunityDraft = OpportunityDraft(),
