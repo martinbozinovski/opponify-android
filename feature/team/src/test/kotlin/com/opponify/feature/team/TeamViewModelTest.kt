@@ -2,8 +2,12 @@ package com.opponify.feature.team
 
 import com.opponify.common.architecture.OperationResult
 import com.opponify.model.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.util.UUID
@@ -16,9 +20,12 @@ private class FakeTeamRepository : TeamRepository {
     override suspend fun leaveTeam(teamId: UUID, userId: UUID, idempotencyKey: String) = OperationResult.Success(Unit)
 }
 
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 class TeamViewModelTest {
     @Test
     fun load_keeps_team_and_members_separate() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        try {
         val vm = TeamViewModel(FakeTeamRepository())
         vm.load(UUID.randomUUID())
         advanceUntilIdle()
@@ -26,5 +33,8 @@ class TeamViewModelTest {
         assertEquals("Test Team", state.team.name)
         assertEquals(1, state.members.size)
         assertEquals(TeamRole.CAPTAIN, state.members.first().role)
+        } finally {
+            Dispatchers.resetMain()
+        }
     }
 }
