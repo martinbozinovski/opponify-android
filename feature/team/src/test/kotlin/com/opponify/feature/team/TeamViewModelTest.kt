@@ -2,6 +2,7 @@ package com.opponify.feature.team
 
 import com.opponify.common.architecture.OperationResult
 import com.opponify.model.*
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test

@@ -7,6 +7,7 @@ import com.opponify.model.SkillLevel
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.util.UUID
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 
 private class FakePlayerProfileRepository : PlayerProfileRepository {
