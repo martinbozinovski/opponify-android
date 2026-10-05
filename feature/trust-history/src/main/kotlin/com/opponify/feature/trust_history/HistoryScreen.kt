@@ -1,0 +1,13 @@
+package com.opponify.feature.trust_history
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.opponify.model.DisputeType
+import java.util.UUID
+
+@Composable fun HistoryScreen(viewModel:HistoryViewModel,gameId:UUID?=null,participantId:UUID?=null){val state by viewModel.uiState.collectAsStateWithLifecycle();Column(Modifier.fillMaxSize().padding(24.dp),verticalArrangement=Arrangement.spacedBy(12.dp)){Text("Attendance, Results & History",style=MaterialTheme.typography.headlineMedium);when(val current=state){is HistoryUiState.Content->HistoryContent(current,viewModel,gameId,participantId);is HistoryUiState.Error->Text("Resolution operation failed: ${current.error::class.simpleName}",color=MaterialTheme.colorScheme.error)}}}
+@Composable private fun HistoryContent(state:HistoryUiState.Content,viewModel:HistoryViewModel,gameId:UUID?,participantId:UUID?){var sportCode by remember(state.resultDraft.sportCode){mutableStateOf(state.resultDraft.sportCode)};var payload by remember(state.resultDraft.payload){mutableStateOf(state.resultDraft.payload.entries.joinToString("; "){"${it.key}=${it.value}"})};Button(onClick={gameId?.let(viewModel::load)},enabled=gameId!=null,modifier=Modifier.fillMaxWidth()){Text("Load authoritative history")};OutlinedTextField(sportCode,{sportCode=it;viewModel.updateResult{d->d.copy(sportCode=it)}},label={Text("Sport code")},modifier=Modifier.fillMaxWidth());OutlinedTextField(payload,{payload=it;viewModel.updateResult{d->d.copy(payload=mapOf("summary" to it))}},label={Text("Result payload")},modifier=Modifier.fillMaxWidth());Button(onClick={participantId?.let{viewModel.submitAttendance(it,UUID.randomUUID().toString())}},enabled=participantId!=null,modifier=Modifier.fillMaxWidth()){Text("Submit attendance claim")};Button(onClick={gameId?.let{viewModel.submitResult(it,UUID.randomUUID().toString())}},enabled=gameId!=null,modifier=Modifier.fillMaxWidth()){Text("Submit result")};Button(onClick={gameId?.let{viewModel.openDispute(it,DisputeType.GAME_OUTCOME,"Participant dispute",UUID.randomUUID().toString())}},enabled=gameId!=null,modifier=Modifier.fillMaxWidth()){Text("Open dispute")};state.history?.let{h->Text("Outcome: ${h.outcomeStatus}");Text("Participants: ${h.participantIds.size}");Text("Attendance claims: ${h.attendance.size}");Text("Result: ${h.result?.status?:"None"}");Text("Disputes: ${h.disputes.size}");Text("History is derived from authoritative game events; claims remain distinguishable from confirmed facts.")}}
