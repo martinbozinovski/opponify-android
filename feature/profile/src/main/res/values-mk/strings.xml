@@ -1,0 +1,11 @@
+<resources>
+    <string name="privacy_title">Приватност и податоци</string>
+    <string name="privacy_description">Контролирајте опционална дијагностика и локални податоци. Клучната состојба останува авторитативна на серверот.</string>
+    <string name="analytics_label">Опционална аналитика</string>
+    <string name="diagnostics_label">Проширена дијагностика</string>
+    <string name="notification_preview_label">Персонализирани прегледи на известувања</string>
+    <string name="save_privacy">Зачувај поставки за приватност</string>
+    <string name="clear_local_data">Исчисти локални податоци</string>
+    <string name="request_anonymization">Побарај анонимизација на сметката</string>
+    <string name="anonymization_status">Статус на анонимизација: %1$s</string>
+</resources>

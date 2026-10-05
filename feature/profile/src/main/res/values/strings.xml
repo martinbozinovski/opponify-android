@@ -1,0 +1,11 @@
+<resources>
+    <string name="privacy_title">Privacy &amp; data</string>
+    <string name="privacy_description">Control optional diagnostics and local-data behavior. Critical domain state remains server authoritative.</string>
+    <string name="analytics_label">Optional analytics</string>
+    <string name="diagnostics_label">Extended diagnostics</string>
+    <string name="notification_preview_label">Personalized notification previews</string>
+    <string name="save_privacy">Save privacy settings</string>
+    <string name="clear_local_data">Clear local app data</string>
+    <string name="request_anonymization">Request account anonymization</string>
+    <string name="anonymization_status">Anonymization status: %1$s</string>
+</resources>
