@@ -28,5 +28,6 @@ for needle, label in [
     ok = needle in text
     print(("PASS " if ok else "FAIL ") + label)
     passed += ok
-print(f"TOTAL={passed} PASS={passed} FAIL=0")
-raise SystemExit(0)
+total=len(checks)+6
+print(f"TOTAL={total} PASS={passed} FAIL={total-passed}")
+raise SystemExit(0 if passed==total else 1)
