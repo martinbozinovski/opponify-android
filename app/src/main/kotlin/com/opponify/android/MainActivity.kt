@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.activity.compose.LocalActivity
 import androidx.compose.ui.text.input.KeyboardType
@@ -32,6 +33,12 @@ import com.opponify.auth.model.AuthState
 import com.opponify.auth.ui.AuthViewModel
 import com.opponify.common.architecture.OperationResult
 import com.opponify.designsystem.OpponifyTheme
+import com.opponify.feature.discovery.DiscoveryScreen
+import com.opponify.feature.discovery.DiscoveryViewModel
+import com.opponify.feature.discovery.RemoteDiscoveryRepository
+import com.opponify.network.AuthenticatedApiClient
+import com.opponify.network.NetworkConfig
+import com.opponify.network.NetworkEnvironment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -100,49 +107,27 @@ private fun AuthScreen(viewModel: AuthViewModel) {
 
 @androidx.compose.runtime.Composable
 private fun SignedInScreen(viewModel: AuthViewModel, state: AuthState.SignedIn) {
-    val activity = LocalActivity.current
-    val scope = rememberCoroutineScope()
-    var phone by remember { mutableStateOf("") }
-    var code by remember { mutableStateOf("") }
-    var verificationId by remember { mutableStateOf<String?>(null) }
-    var message by remember { mutableStateOf<String?>(null) }
+    var showAccount by remember { mutableStateOf(false) }
+    val apiClient = remember { AuthenticatedApiClient(NetworkConfig(NetworkEnvironment.DEV, BuildConfig.API_BASE_URL)) }
+    val discoveryRepository = remember { RemoteDiscoveryRepository(apiClient) }
+    val discoveryViewModel = remember { DiscoveryViewModel(discoveryRepository) }
+    val discoveryState by discoveryViewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) { discoveryViewModel.load() }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text("Welcome to Opponify", style = MaterialTheme.typography.headlineMedium)
-        Text("Account: ${state.user.email ?: "Email unavailable"}")
-        Text("Email verified: ${state.user.isEmailVerified}")
-        Text("Phone verified: ${state.user.isPhoneVerified}")
-        if (!state.user.isEmailVerified) {
-            Button(onClick = { scope.launch { message = viewModel.sendEmailVerification().toMessage() } }) {
-                Text("Send email verification")
-            }
+        Text("Opponify", style = MaterialTheme.typography.headlineMedium)
+        Text("Welcome, ${state.user.email ?: "player"}")
+        Text("Find an opponent, players, or a game.")
+        DiscoveryScreen(discoveryState)
+        Button(onClick = { showAccount = !showAccount }) { Text(if (showAccount) "Hide account" else "Account") }
+        if (showAccount) {
+            Text("Email verified: ${state.user.isEmailVerified}")
+            Text("Phone verified: ${state.user.isPhoneVerified}")
         }
-        if (!state.user.isPhoneVerified) {
-            OutlinedTextField(phone, { phone = it }, label = { Text("Phone number") }, modifier = Modifier.fillMaxWidth(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone), singleLine = true)
-            Button(
-                enabled = activity != null,
-                onClick = {
-                    val host = activity ?: return@Button
-                    viewModel.startPhoneVerification(host, phone, object : PhoneVerificationCallbacks {
-                        override fun onCodeSent(id: String, resendToken: Any?) {
-                            verificationId = id
-                            message = "Verification code sent."
-                        }
-                        override fun onVerificationCompleted() { message = "Phone verified." }
-                        override fun onVerificationFailed(messageText: String) { message = messageText }
-                    })
-                },
-            ) { Text("Send SMS code") }
-            verificationId?.let { id ->
-                OutlinedTextField(code, { code = it }, label = { Text("SMS code") }, modifier = Modifier.fillMaxWidth(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), singleLine = true)
-                Button(onClick = { scope.launch { message = viewModel.linkPhoneVerification(id, code).toMessage() } }) { Text("Verify phone") }
-            }
-        }
-        OutlinedButton(onClick = { scope.launch { viewModel.signOut() } }) { Text("Sign out") }
-        message?.let { Text(it) }
+        OutlinedButton(onClick = { viewModel.signOut() }) { Text("Sign out") }
     }
 }
 

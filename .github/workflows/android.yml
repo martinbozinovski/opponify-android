@@ -13,4 +13,12 @@ jobs:
       - uses: android-actions/setup-android@v4
       - run: sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
       - run: chmod +x ./gradlew
-      - run: ./gradlew clean test lint assembleDevDebug --no-daemon
+      - name: Generate ephemeral CI signing key
+        run: keytool -genkeypair -keystore "$RUNNER_TEMP/opponify-ci.jks" -storepass changeit -keypass changeit -alias opponify-ci -keyalg RSA -keysize 2048 -validity 1 -dname "CN=Opponify CI"
+      - name: Build, test, lint, and production release artifact
+        run: ./gradlew clean test lint assembleDevDebug assembleProductionRelease --no-daemon -POPPONIFY_PRODUCTION_API_BASE_URL=https://staging.invalid/
+        env:
+          OPPONIFY_KEYSTORE_PATH: ${{ runner.temp }}/opponify-ci.jks
+          OPPONIFY_KEYSTORE_PASSWORD: changeit
+          OPPONIFY_KEY_ALIAS: opponify-ci
+          OPPONIFY_KEY_PASSWORD: changeit
