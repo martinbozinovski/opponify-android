@@ -12,7 +12,7 @@ checks={
 "Room":'libs.androidx.room.runtime' in (r/"core/database/build.gradle.kts").read_text(),
 "Retrofit/OkHttp":all(x in (r/"core/network/build.gradle.kts").read_text() for x in ['libs.retrofit','libs.okhttp']),
 "Hilt":'com.google.dagger.hilt.android' in (r/"build.gradle.kts").read_text(),
-"design system":(r/"core/design-system/src/main/kotlin/com/opponify/designsystem/Theme.kt").exists(),
+"design system":(r/"core/design-system/src/main/kotlin/com/opponify/design-system/Theme.kt").exists(),
 "features":all((r/"feature"/x).exists() for x in ['discovery','opportunity','game','team','profile','trust-history','facility','notification','moderation']),
 "CI":(r/".github/workflows/android.yml").exists(),
 "no signing files":not any(p.suffix in {'.jks','.keystore'} for p in r.rglob('*') if p.is_file()),
