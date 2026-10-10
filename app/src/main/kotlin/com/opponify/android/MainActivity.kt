@@ -108,6 +108,7 @@ private fun AuthScreen(viewModel: AuthViewModel) {
 @androidx.compose.runtime.Composable
 private fun SignedInScreen(viewModel: AuthViewModel, state: AuthState.SignedIn) {
     var showAccount by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
     val apiClient = remember { AuthenticatedApiClient(NetworkConfig(NetworkEnvironment.DEV, BuildConfig.API_BASE_URL)) }
     val discoveryRepository = remember { RemoteDiscoveryRepository(apiClient) }
     val discoveryViewModel = remember { DiscoveryViewModel(discoveryRepository) }
@@ -127,7 +128,7 @@ private fun SignedInScreen(viewModel: AuthViewModel, state: AuthState.SignedIn) 
             Text("Email verified: ${state.user.isEmailVerified}")
             Text("Phone verified: ${state.user.isPhoneVerified}")
         }
-        OutlinedButton(onClick = { viewModel.signOut() }) { Text("Sign out") }
+        OutlinedButton(onClick = { scope.launch { viewModel.signOut() } }) { Text("Sign out") }
     }
 }
 
